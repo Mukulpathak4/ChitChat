@@ -18,6 +18,7 @@ async function loginUser(e) {
 
         console.log(response);
         alert(response.data.message);
+        window.location.href = '../html/chatHome.html';
 
     } catch (err) {
         console.log(err);

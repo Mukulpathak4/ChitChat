@@ -21,9 +21,10 @@ async function postSignUp(e){
         if (isStringInvalid(name) || isStringInvalid(email) || isStringInvalid(phone) || isStringInvalid(password)){
             alert("Bad parameters. Something is missing");
           }
-else{
-        const response = await axios.post('http://localhost:3000/signup', signupDetails);
-}
+        else{
+                const response = await axios.post('http://localhost:3000/signup', signupDetails);
+        }
+        window.location.href = '../html/login.html';
     }
     catch(err){
         alert(err.response.data.error);

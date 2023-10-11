@@ -1,24 +1,25 @@
 require('dotenv').config();
-const cors = require('cors');
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static("public"));
 const sequelize = require('./utility/database');
 const userRoutes = require('./routes/signupRoutes');
 
-app.use(cors({
-  origin: "*"
-}));
-
-app.use(express.json());
+app.use(cors()); // Enable CORS for all routes
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public")); // To serve static files from the "public" directory
 
 app.use('/', userRoutes);
 
 sequelize.sync().then(() => {
-    app.listen(port);
-    console.log('server is running');
+    app.listen(port, () => {
+        console.log('Server is running on port ' + port);
+    });
 }).catch(err => {
-    console.log(err);
+    console.error('Error starting the server: ' + err);
 });
