@@ -6,6 +6,7 @@ const isStringInvalid = (string) => {
 }
 async function postSignUp(e){
     try{
+        e.preventDefault();
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const phone = document.getElementById('phone').value;
@@ -17,13 +18,12 @@ async function postSignUp(e){
             phone,
             password
         };
-
         if (isStringInvalid(name) || isStringInvalid(email) || isStringInvalid(phone) || isStringInvalid(password)){
             alert("Bad parameters. Something is missing");
           }
-          else{
-            const response = await axios.post('http://localhost:3000/signup', signupDetails);
-          }
+else{
+        const response = await axios.post('http://localhost:3000/signup', signupDetails);
+}
     }
     catch(err){
         alert(err.response.data.error);

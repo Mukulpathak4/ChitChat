@@ -4,13 +4,14 @@ const sequelize = require('../utility/database');
 const path = require("path");
 
 const getSignUpPage = (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/views/html/signup.html"));
+    res.sendFile(path.join(__dirname, "../public/html/signup.html"));
 };
 
 const postUserSignup = async(req, res)=>{
     const t = await sequelize.transaction();
     try{
         const { name, email, phone, password } = req.body;
+
         const user = await User.findOne({ where: { email } }, { transaction: t });
 
         if (user) {
@@ -20,6 +21,7 @@ const postUserSignup = async(req, res)=>{
 
         await User.create({ name, email, phone, password: hash }, { transaction: t })
         await t.commit();
+        alert("Successfully signedUp")
         res.status(201).json({ message: 'Successfully created a new user account' });
     }
     catch(err){
