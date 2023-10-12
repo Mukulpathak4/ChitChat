@@ -1,0 +1,91 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#chat-container {
+    display: flex;
+    height: 100vh;
+}
+
+#navbar {
+    width: 250px;
+    background-color: #b6dce9;
+    color: white;
+    padding: 20px;
+}
+
+#main-content {
+    flex: 1;
+    background-color: #f0f0f0;
+    padding: 20px;
+    overflow: auto; /* Use 'auto' for better scroll behavior */
+}
+
+#message-bar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    padding: 10px;
+    position: fixed; /* Make the message bar stick to the bottom */
+    bottom: 0;
+    width: 100%;
+}
+
+#message-input {
+    flex: 1;
+    padding: 10px; /* Increased padding for better input appearance */
+    border: none; /* Remove the border for a cleaner look */
+}
+
+#send-button {
+    background-color: #27333f;
+    color: #fff;
+	font-size: medium;
+    border: none;
+    padding: 10px 20px;
+	margin-right: 2%;
+    cursor: pointer;
+    border-radius: 5px; /* Add rounded corners for a modern look */
+}
+
+#logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #cc5753;
+    color: #fff;
+	font-size: medium;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#chat-buttons {
+    margin-top: 20px;
+}
+
+.chat-button {
+    display: block;
+    background-color: #2f3c4a; /* Consistent with the send button color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.chat-button:hover {
+    background-color: #000407; /* Slightly darker on hover for interaction */
+}
+#send-button:hover {
+    background-color: #000407; /* Slightly darker on hover for interaction */
+}
+#logout-button:hover {
+    background-color: #fa0606; /* Slightly darker on hover for interaction */
+}
