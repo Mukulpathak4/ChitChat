@@ -8,6 +8,7 @@ const port = process.env.PORT || 3000;
 
 const sequelize = require('./utility/database');
 const userRoutes = require('./routes/signupRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.json());
@@ -15,6 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public")); // To serve static files from the "public" directory
 
 app.use('/', userRoutes);
+app.use('/chats', chatRoutes);
+
 
 sequelize.sync().then(() => {
     app.listen(port, () => {

@@ -16,10 +16,11 @@ async function loginUser(e) {
 
         const response = await axios.post('http://localhost:3000/login', loginDetails);
 
-        console.log(response);
         alert(response.data.message);
-        window.location.href = '../html/chatHome.html';
 
+        localStorage.setItem('token', response.data.token);
+
+        window.location.href = '../html/chat.html';
     } catch (err) {
         console.log(err);
     }

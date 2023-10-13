@@ -1,12 +1,11 @@
 const btn = document.getElementById('submit');
 
 btn.addEventListener('click', postSignUp);
-const isStringInvalid = (string) => {
-    return string == undefined || string.length === 0;
-}
+
 async function postSignUp(e){
-    try{
+     try {
         e.preventDefault();
+
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const phone = document.getElementById('phone').value;
@@ -18,15 +17,13 @@ async function postSignUp(e){
             phone,
             password
         };
-        if (isStringInvalid(name) || isStringInvalid(email) || isStringInvalid(phone) || isStringInvalid(password)){
-            alert("Bad parameters. Something is missing");
-          }
-        else{
-                const response = await axios.post('http://localhost:3000/signup', signupDetails);
-        }
+
+        const response = await axios.post('http://localhost:3000/signup', signupDetails);
+
+        alert(response.data.message);
+
         window.location.href = '../html/login.html';
-    }
-    catch(err){
+    } catch (err) {
         alert(err.response.data.error);
     }
 }
