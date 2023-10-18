@@ -1,20 +1,20 @@
 const btn = document.getElementById('submit');
 
-btn.addEventListener('click', postSignUp);
+btn.addEventListener('click', storeSignupDetails);
 
-async function postSignUp(e){
-     try {
+async function storeSignupDetails(e) {
+    try {
         e.preventDefault();
 
-        const name = document.getElementById('name').value;
+        const name = document.getElementById('username').value;
         const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
         const password = document.getElementById('password').value;
 
         let signupDetails = {
             name,
             email,
-            phone,
+            phoneNumber,
             password
         };
 
@@ -22,8 +22,15 @@ async function postSignUp(e){
 
         alert(response.data.message);
 
+        document.getElementById('someResponse').textContent = `${response.data.message}`;
+        document.getElementById('someResponse').style.color = 'green';
+
         window.location.href = '../html/login.html';
     } catch (err) {
         alert(err.response.data.error);
+
+        document.getElementById('someResponse').innerHTML = `Error: ${err.response.data.error}`;
+        document.getElementById('someResponse').style.color = 'red';
+        console.log(err);
     }
 }

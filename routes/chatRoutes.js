@@ -6,8 +6,8 @@ const router = express.Router();
 
 const authenticateMiddleware = require('../auth/auth');
 
-router.post('/send', authenticateMiddleware.authenticate, chatController.sendMessage);
+router.post('/send', authenticateMiddleware.authenticate, chatController.postMessage);
 
-router.get('/messages', chatController.getMessages);
+router.get('/messages/:groupId', chatController.getMessages);
 
 module.exports = router;

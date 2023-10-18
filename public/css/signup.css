@@ -6,8 +6,8 @@ body, h2, form, label, input, p, a {
 
 /* Set a background color and font family for the entire page */
 body {
-    background-color: #b6dce9;
-    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Center the form on the page */
@@ -16,7 +16,7 @@ form {
     margin: 0 auto;
     margin-top: 2%;
     padding-top: 2%;
-    background-color: #ffffff;
+    background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -25,7 +25,7 @@ form {
 /* Style the h2 header */
 h2 {
     text-align: center;
-    color: #333;
+    color: #075e54;
     margin-top: 2%;
 }
 
@@ -33,7 +33,7 @@ h2 {
 label {
     display: block;
     margin-bottom: 5px;
-    color: #333;
+    color: #075e54;
 }
 
 input[type="text"],
@@ -43,7 +43,7 @@ input[type="password"] {
     width: 90%;
     padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #232f36;
+    border: 1px solid #e6e6e6;
     border-radius: 5px;
     font-size: 16px;
 }
@@ -51,7 +51,7 @@ input[type="password"] {
 /* Style the submit button */
 button{
     width: 100%;
-    background-color: #232f36;
+    background-color: #25D366;
     color: #fff;
     padding: 10px;
     border: none;
@@ -68,7 +68,7 @@ p {
 
 a {
     text-decoration: none;
-    color: #232f36;
+    color: #075e54;
 }
 
 /* Responsive design for smaller screens */

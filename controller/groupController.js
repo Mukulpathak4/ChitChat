@@ -1,55 +1,33 @@
-// Import necessary modules and models
-const Group = require('../models/groupModel');
-const User = require('../models/userModel');
-const UserGroup = require('../models/userGroupModel');
-const sequelize = require('../util/config');
+const Group = require('../model/groupModel');
+const User = require('../model/userModel');
+const UserGroup = require('../model/userGroupModel');
+const sequelize = require('../utility/database');
 
-// Helper function to check if a string is invalid (undefined or empty)
-const isStringInvalid = (string) => {
-    return string == undefined || string.length === 0;
-}
+const isStringInvalid = (string) => string == undefined || string.length === 0;
 
-// Add a new group to the groups table
 const postNewGroup = async (req, res) => {
-    const t = await sequelize.transaction();
     try {
         const { groupName } = req.body;
         const name = req.user.name;
 
-        // Check if the groupName is invalid
         if (isStringInvalid(groupName)) {
             return res.status(400).json({ error: "Parameters are missing" });
         }
 
-        // Create a new group in the Group model
-        const group = await Group.create({ name: groupName, createdBy: name, userId: req.user.id }, { transaction: t });
-        // Create a user-group association in the UserGroup model with isAdmin set to true
-        const userGroup = await UserGroup.create({ userId: req.user.id, groupId: group.dataValues.id, isAdmin: true }, { transaction: t });
+        const group = await Group.create({ name: groupName, createdBy: name, userId: req.user.id });
+        const userGroup = await UserGroup.create({ userId: req.user.id, groupId: group.id, isAdmin: true });
 
-        await t.commit();
         res.status(202).json({ newGroup: group, message: `Successfully created ${groupName}`, userGroup });
     } catch (err) {
-        await t.rollback();
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
-// Get a list of groups based on the user's ID
 const getGroups = async (req, res) => {
     try {
-        // Find all user-group associations with the specified userId
         const userGroup = await UserGroup.findAll({ where: { userId: req.user.id } });
-
-        let groupsList = [];
-        for (let i = 0; i < userGroup.length; i++) {
-            let groupId = userGroup[i].dataValues.groupId;
-            // Find the group based on groupId
-            const group = await Group.findByPk(groupId);
-            groupsList.push(group);
-        }
-
-        // Retrieve all users
+        const groupsList = await Promise.all(userGroup.map(async (ug) => await Group.findByPk(ug.groupId)));
         const users = await User.findAll();
 
         res.status(201).json({ listOfUsers: users, groupsList, userGroup });
@@ -59,9 +37,62 @@ const getGroups = async (req, res) => {
     }
 }
 
+const addUserToGroup = async (req, res) => {
+    try {
+        const { userId, groupId } = req.params;
+        const userGroup = await UserGroup.create({ userId, groupId, isAdmin: false });
 
+        res.status(202).json({ userGroup, message: 'Successfully added user to your group' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+const getGroupMembers = async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        const userGroups = await UserGroup.findAll({ where: { groupId } });
+
+        const userIds = userGroups.map((ug) => ug.userId);
+        const usersDetails = await Promise.all(userIds.map((userId) => User.findByPk(userId)));
+
+        res.status(200).json({ usersDetails, userGroups });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+const deleteGroupMember = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await UserGroup.destroy({ where: { id } });
+        res.status(200).json({ message: `Successfully removed group member` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Internal Server Error` });
+    }
+}
+
+const updateIsAdmin = async (req, res) => {
+    try {
+        const userGroupId = req.params.userGroupId;
+        const userGroup = await UserGroup.findOne({ where: { id: userGroupId } });
+        await userGroup.update({ isAdmin: true });
+        res.status(202).json({ message: `Successfully made Admin of Group` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Internal Server Error` });
+    }
+}
 
 module.exports = {
     postNewGroup,
     getGroups,
-}
+    addUserToGroup,
+    getGroupMembers,
+    deleteGroupMember,
+    updateIsAdmin
+};

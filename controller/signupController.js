@@ -1,55 +1,47 @@
-const User = require('../model/signupModel');
+const User = require('../model/userModel');
 const bcrypt = require('bcrypt');
-const sequelize = require('../utility/database');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const path = require("path");
 
+const isStringInvalid = (string) => string === undefined || string.length === 0;
+
 const getSignUpPage = (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/html/signup.html"));
+    res.sendFile(path.join(__dirname, "..", "public", "html", "signup.html"));
 };
 
-const postUserSignup = async (req, res) => {
-    const t = await sequelize.transaction();
+const signup = async (req, res) => {
     try {
-        const { name, email, phone, password } = req.body;
-
-        const existingUser = await User.findOne({ where: { email }, transaction: t });
-
-        if (existingUser) {
-            await t.rollback();
+        const { name, email, phoneNumber, password } = req.body;
+        if (isStringInvalid(name) || isStringInvalid(email) || isStringInvalid(phoneNumber) || isStringInvalid(password)) {
+            return res.status(400).json({ error: "Bad parameters. Something is missing" });
+        }
+        const user = await User.findOne({ where: { email } });
+        if (user) {
             return res.status(400).json({ error: 'User already exists. Please login' });
         }
-
         const hash = await bcrypt.hash(password, 10);
-
-        await User.create({ name, email, phone, password: hash }, { transaction: t });
-
-        await t.commit();
-
+        await User.create({ name, email, phoneNumber, password: hash });
         res.status(201).json({ message: 'Successfully created a new user account' });
     } catch (err) {
-        await t.rollback();
+        console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+};
 
+const generateAccessToken = (id, name) => jwt.sign({ userId: id, name }, process.env.TOKEN_SECRET);
 
 const login = async (req, res) => {
-    const t = await sequelize.transaction();
     try {
         const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email or password are missing' });
+        if (isStringInvalid(email) || isStringInvalid(password)) {
+            return res.status(400).json({ error: 'Email and password are missing' });
         }
-
-        const user = await User.findOne({ where: { email }, transaction: t });
-
+        const user = await User.findOne({ where: { email } });
         if (user) {
-            const passwordMatch = await bcrypt.compare(password, user.password);
-
-            if (passwordMatch) {
-                await t.commit();
-                res.status(200).json({
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            if (isPasswordValid) {
+                return res.status(200).json({
                     message: 'User logged in successfully',
                     token: generateAccessToken(user.id, user.name)
                 });
@@ -60,13 +52,24 @@ const login = async (req, res) => {
             return res.status(404).json({ error: `User not found` });
         }
     } catch (err) {
-        await t.rollback();
+        console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+};
+
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.findAll();
+        res.status(202).json({ listOfUsers: users });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Internal Server Error` });
+    }
+};
 
 module.exports = {
-    postUserSignup,
-    getSignUpPage,
+    signup,
     login,
-}
+    getUsers,
+    getSignUpPage,
+};

@@ -15,13 +15,17 @@ async function loginUser(e) {
         };
 
         const response = await axios.post('http://localhost:3000/login', loginDetails);
-
         alert(response.data.message);
 
         localStorage.setItem('token', response.data.token);
 
+        document.getElementById('someResponse').textContent = `${response.data.message}`;
+        document.getElementById('someResponse').style.color = 'green';
         window.location.href = '../html/chat.html';
     } catch (err) {
         console.log(err);
+
+        document.getElementById('someResponse').innerHTML = `Error: ${err.response.data.error}`;
+        document.getElementById('someResponse').style.color = 'red';
     }
 }

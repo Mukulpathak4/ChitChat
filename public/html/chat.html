@@ -1,42 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html class=''>
 
 <head>
-    <link rel="stylesheet" href="../css/chat.css">
-    <title>ChitChat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.js"
+        integrity="sha512-VJ6+sp2E5rFQk05caiXXzQd1wBABpjEj1r5kMiLmGAAgwPItw1YpqsCCBtq8Yr1x6C49/mTpRdXtq8O2RcZhlQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
+    <link rel="stylesheet" href="../css/chat.css" class="cp-pen-styles">
 </head>
 
 <body>
-    <div id="chat-container">
-        <div id="navbar">
-            <div id="chat-buttons">
-                <a href="#" class="chat-button">Public Group</a>
-                <a href="#" class="chat-button">Create Private Group</a>
-                <div id="createGroupInput"></div>
-                <a href="#" class="chat-button">Add to Group</a>
-                <a href="#" class="chat-button">Show Members</a>
+    <div id="frame">
+        <div id="sidepanel">
+            <div id="profile">
+                <div class="wrap">
+                    <p id="userName">Groups and Contacts</p>
+                </div>
+            </div>
+            <div id="contacts">
+
+            </div>
+            <div id="nav-bar">
+                <button id="addGroup"><i aria-hidden="true"></i> <span>Create New Group</span></button>
+                <button id="showMyGroups"><i aria-hidden="true"></i>Show My Groups<span></span></button>
+                <button id="showGroupMembers"><i aria-hidden="true"></i> <span>Show Group members</span></button>
+                <button id="addUsers"><i aria-hidden="true"></i> <span>Add Contacts</span></button>
             </div>
         </div>
-        <ul id="showPreviousMsg">
+        <div class="content">
+            <div class="upper-bar">
+                <p style="font-weight: bolder; font-style: italic; margin-left: 40%; font-size: xx-large;" id="boxName">
+                    CHITCHAT</p>
+                <div class="logout-Btn">
+                    <button id="logoutBtn">Logout</button>
+                </div>
+            </div>
+            <div class="messages" id="messageBox">
+                <ul id="showPreviousMsg">
 
-        </ul>
-        <div class="messages" id="messageBox">
-            <ul id="showPreviousMsg">
+                </ul>
+                <ul id="userMessage">
+                </ul>
+                <ul id="newMessages">
 
-            </ul>
-            <ul id="userMessage">
-            </ul>
-            <ul id="newMessages">
+                </ul>
+            </div>
+            <div class="message-input">
+                <div class="wrap">
+                    <input class="wrapInput" type="text" id="message-input" placeholder="Write your message..." />
+                    <button class="submit" id="send-message">Send</button>
+                </div>
+            </div>
+        </div>
+        <div class="center" id="createGroupPopup">
+            <div class="container">
+                <label for="show" class="close-btn fas fa-times" title="close" id="close"></label>
+                <div class="text">Create User Group</div>
+                <form action="#">
+                    <div class="data">
+                        <label>User Group Name:-</label>
+                        <input type="text" id="groupName" placeholder="Enter User Group Name">
+                    </div>
 
-            </ul>
+                    <div class="btn">
+                        <div class="inner"></div>
+                        <button type="submit" id="submitGroup">Create Group</button>
+                    </div>
+                    <div id="showResponse" style="text-align: center;"></div>
+                </form>
+            </div>
         </div>
     </div>
-    <div id="message-bar">
-        <input type="text" id="message-input" placeholder="Type your message">
-        <button id="send-button">Send</button>
-    </div>
-    <button id="logout-button">Logout</button>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.5/axios.min.js"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script src="../js/chat.js"></script>
+    <script src="../js/group.js"></script>
 </body>
 
 </html>
