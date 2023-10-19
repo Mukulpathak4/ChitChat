@@ -18,7 +18,7 @@ async function storeSignupDetails(e) {
             password
         };
 
-        const response = await axios.post('http://localhost:3000/signup', signupDetails);
+        const response = await axios.post('http://65.1.165.223/signup', signupDetails);
 
         alert(response.data.message);
 

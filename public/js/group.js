@@ -28,7 +28,7 @@ async function createGroup(e) {
 
         const token = localStorage.getItem('token');
 
-        const res = await axios.post('http://localhost:3000/group/create', groupObj, {
+        const res = await axios.post('http://65.1.165.223/group/create', groupObj, {
             headers: { "Authorization": token },
         });
 
