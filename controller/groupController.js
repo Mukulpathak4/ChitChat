@@ -64,7 +64,6 @@ const getGroupMembers = async (req, res) => {
     }
 };
 
-
 const deleteGroupMember = async (req, res) => {
     try {
         const { id } = req.params;

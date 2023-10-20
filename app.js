@@ -1,11 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const cors = require('cors');
-const multer = require('multer');
-const upload = multer();
-const cron = require('node-cron');
 
 const app = express();
 const server = require('http').createServer(app);
@@ -68,27 +64,6 @@ io.on("connect", (socket) => {
         console.log(`user is disconnected`);
     })
 });
-
-cron.schedule('0 0 * * *', async () => {
-    try {
-        const chats = await Chats.findAll();
-
-        for (let chat of chats) {
-            await ArchivedChats.create({
-                message: chat.textmessage,
-                sender: chat.name,
-                groupId: chat.groupId,
-                userId: chat.userId
-            });
-            console.log('old chats are stored to archived table');
-
-            await Chats.destroy({ where: { id: chat.id } });
-            console.log('chats in the chats table are deleted');
-        }
-    } catch (err) {
-        console.log(err);
-    }
-})
 
 sequelize.sync().then(() => {
     server.listen(port);

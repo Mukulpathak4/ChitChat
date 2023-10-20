@@ -5,6 +5,7 @@ require('dotenv').config();
 const path = require("path");
 
 const isStringInvalid = (string) => string === undefined || string.length === 0;
+const generateAccessToken = (id, name) => jwt.sign({ userId: id, name }, process.env.TOKEN_SECRET);
 
 const getSignUpPage = (req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "html", "signup.html"));
@@ -28,8 +29,6 @@ const signup = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
-const generateAccessToken = (id, name) => jwt.sign({ userId: id, name }, process.env.TOKEN_SECRET);
 
 const login = async (req, res) => {
     try {

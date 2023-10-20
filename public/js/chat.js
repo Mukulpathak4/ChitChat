@@ -1,15 +1,13 @@
-// Initialize a WebSocket connection to the server
 const socket = io('http://65.1.165.223');
-
-// Get references to various HTML elements
 const sendMessage = document.getElementById('send-message');
 const chatsCanStored = 1000;
-// const addGroup = document.getElementById('addGroup');
 const searchUsers = document.getElementById('searchContacts');
 const message = document.getElementById('message-input');
 const showGroups = document.getElementById('showMyGroups');
 const addUsers = document.getElementById('addUsers');
 const showGroupMembers = document.getElementById('showGroupMembers');
+
+document.getElementById('logoutBtn').addEventListener('click',logout);
 
 sendMessage.addEventListener('click', () => {
     if (message.value !== '') {
@@ -48,8 +46,6 @@ async function postMessage() {
         console.log(err);
     }
 }
-
-
 
 window.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -92,7 +88,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-
 const getUserMsgs = async (groupId) => {
     try {
         const showPrevMsgs = document.getElementById('showPreviousMsg');
@@ -124,7 +119,6 @@ const getUserMsgs = async (groupId) => {
     }
 };
 
-
 function showUsersChatsOnScreen(chats) {
     const token = localStorage.getItem('token');
     const decodeToken = parseJwt(token);
@@ -148,7 +142,6 @@ function showUsersChatsOnScreen(chats) {
     ul.appendChild(li);
 }
 
-// Function to display user groups on the screen
 const showGroupsOnScreen = (groups, userGroup) => {
     const groupLists = document.getElementById('groupLists');
 
@@ -173,7 +166,6 @@ const showGroupsOnScreen = (groups, userGroup) => {
 };
 
 
-// Function to display user contacts on the screen
 const showUsersOnScreen = (users) => {
     const token = localStorage.getItem('token');
     const isAdmin = JSON.parse(localStorage.getItem('isAdmin'));
@@ -223,7 +215,6 @@ const showUsersOnScreen = (users) => {
 };
 
 
-// Function to display group members on the screen
 const showGroupUsersOnScreen = (users, userGroup) => {
     const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
     const token = localStorage.getItem('token');
@@ -301,7 +292,6 @@ const showGroupUsersOnScreen = (users, userGroup) => {
     userLists.appendChild(li);
 };
 
-// Function to display group title on the screen
 const showGroupsListTitle = () => {
     const contacts = document.getElementById('contacts');
     const userLists = document.createElement('ul');
@@ -326,7 +316,6 @@ const showGroupsListTitle = () => {
     });
 };
 
-// Function to display user list title on the screen
 const showUserListTitle = () => {
     const contacts = document.getElementById('contacts');
     const userLists = document.createElement('ul');
@@ -352,7 +341,6 @@ const showUserListTitle = () => {
     });
 };
 
-// Function to display group user list title on the screen
 const showGroupUserListTitle = () => {
     const contacts = document.getElementById('contacts');
     const userLists = document.createElement('ul');
@@ -378,20 +366,16 @@ const showGroupUserListTitle = () => {
     };
 };
 
-// Function to display group name on the screen
 const showGroupName = (groupName) => {
     const boxName = document.getElementById('boxName');
     boxName.textContent = `${groupName}`;
 };
 
-// Function to display user name and role (admin/user) on the screen
 const showUserName = () => {
     const decodeToken = parseJwt(localStorage.getItem('token'));
     const userName = document.getElementById('userName');
     userName.textContent = `${decodeToken.name}`;
 };
-
-
 
 const showNotificationOnScreen = (name) => {
     const ul = document.getElementById('newMessages');
@@ -403,8 +387,6 @@ const showNotificationOnScreen = (name) => {
 
     ul.append(p);
 };
-
-
 
 showGroups.addEventListener('click', async () => {
     // Get the user's token
@@ -423,7 +405,6 @@ showGroups.addEventListener('click', async () => {
 });
 
 
-// Add a click event listener to the "Show Group Members" button
 showGroupMembers.addEventListener('click', async () => {
     const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
     showGroupUserListTitle();
@@ -439,7 +420,6 @@ showGroupMembers.addEventListener('click', async () => {
     }
 });
 
-// Add a click event listener to the "Add Users" button
 addUsers.addEventListener('click', async () => {
     // Send a GET request to fetch a list of users from the server
     const res = await axios.get('http://65.1.165.223/users');
@@ -452,7 +432,6 @@ addUsers.addEventListener('click', async () => {
     });
 });
 
-// Function to handle leaving a user group
 const leaveUserGroup = (leaveGroup, userGroupId, li) => {
     const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
     leaveGroup.addEventListener('click', async () => {
@@ -478,8 +457,6 @@ function parseJwt(token) {
     }
 }
 
-
-
 function isValidURL(str) {
     try {
         new URL(str);
@@ -488,9 +465,6 @@ function isValidURL(str) {
         return false;
     }
 }
-
-
-document.getElementById('logoutBtn').addEventListener('click',logout);
 
 function logout() {
   try {
