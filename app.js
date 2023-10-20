@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const multer = require('multer');
+const upload = multer();
 
 const app = express();
 const server = require('http').createServer(app);
@@ -24,6 +26,7 @@ const ArchivedChats = require('./model/archivedChatModel');
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const groupRoutes = require('./routes/groupRoutes');
+const fileRoutes = require('./routes/multimediaRoutes');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -34,6 +37,7 @@ app.use(express.static("public"));//To serve static file from public
 app.use('/', userRoutes);
 app.use('/chats', chatRoutes);
 app.use('/group', groupRoutes);
+app.use('/files', upload.single('userFile'), fileRoutes);
 
 User.hasMany(Chats);
 Chats.belongsTo(User);

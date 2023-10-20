@@ -1,4 +1,4 @@
-const socket = io('http://65.1.165.223');
+const socket = io('http://localhost:3000');
 const sendMessage = document.getElementById('send-message');
 const chatsCanStored = 1000;
 const searchUsers = document.getElementById('searchContacts');
@@ -6,8 +6,10 @@ const message = document.getElementById('message-input');
 const showGroups = document.getElementById('showMyGroups');
 const addUsers = document.getElementById('addUsers');
 const showGroupMembers = document.getElementById('showGroupMembers');
+const sendMedia = document.getElementById('send-media');
 
 document.getElementById('logoutBtn').addEventListener('click',logout);
+sendMedia.addEventListener('input', uploadFile);
 
 sendMessage.addEventListener('click', () => {
     if (message.value !== '') {
@@ -25,7 +27,7 @@ async function postMessage() {
         const groupId = groupdata.id;
         const messageObj = { textMessage, groupId };
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://65.1.165.223/chats/send', messageObj, {
+        const response = await axios.post('http://localhost:3000/chats/send', messageObj, {
             headers: { "Authorization": token },
         });
 
@@ -98,7 +100,7 @@ const getUserMsgs = async (groupId) => {
         button.className = 'button-18';
         button.onclick = async () => {
             try {
-                const response = await axios.get(`http://65.1.165.223/chats/Messages/${groupId}`);
+                const response = await axios.get(`http://localhost:3000/chats/Messages/${groupId}`);
                 const latestChats = response.data.textMessages;
 
                 if (response.status === 202) {
@@ -196,7 +198,7 @@ const showUsersOnScreen = (users) => {
             if (groupData.id) {
                 button.addEventListener('click', async () => {
                     try {
-                        const addUserToGroup = await axios.post(`http://65.1.165.223/group/add/${toUserId}/${groupId}`);
+                        const addUserToGroup = await axios.post(`http://localhost:3000/group/add/${toUserId}/${groupId}`);
                         const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
                         if (Number(addUserToGroup.data.userGroup.userId) === users.id) {
                             alert(`You successfully added ${users.name} to ${groupDetails.name}`);
@@ -270,7 +272,7 @@ const showGroupUsersOnScreen = (users, userGroup) => {
 
         removeUser.addEventListener('click', async () => {
             const userGroupId = userGroup.id;
-            const res = await axios.delete(`http://65.1.165.223/group/remove/${userGroupId}`);
+            const res = await axios.delete(`http://localhost:3000/group/remove/${userGroupId}`);
             if (res.status === 200) {
                 li.remove();
                 alert(`You successfully removed ${users.name} from ${groupDetails.name}`);
@@ -279,7 +281,7 @@ const showGroupUsersOnScreen = (users, userGroup) => {
 
         makeAdmin.addEventListener('click', async () => {
             const userGroupId = userGroup.id;
-            const res = await axios.post(`http://65.1.165.223/group/admin/${userGroupId}`);
+            const res = await axios.post(`http://localhost:3000/group/admin/${userGroupId}`);
             if (res.status === 202) {
                 makeAdmin.remove();
                 removeUser.remove();
@@ -389,43 +391,42 @@ const showNotificationOnScreen = (name) => {
 };
 
 showGroups.addEventListener('click', async () => {
-    // Get the user's token
-    const token = localStorage.getItem('token');
+    try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:3000/group/groups', { headers: { "Authorization": token } });
+        const usersGroups = res.data.groupsList;
+        const userGroup = res.data.userGroup;
 
-    // Send a GET request to fetch user's groups from the server
-    const res = await axios.get('http://65.1.165.223/group/groups', { headers: { "Authorization": token } });
-    const usersGroups = res.data.groupsList;
-    const userGroup = res.data.userGroup;
-
-    // Display the list of user's groups
-    showGroupsListTitle();
-    for (let i = 0; i < usersGroups.length && i < userGroup.length; i++) {
-        showGroupsOnScreen(usersGroups[i], userGroup[i]);
+        showGroupsListTitle();
+        for (let i = 0; i < usersGroups.length && i < userGroup.length; i++) {
+            showGroupsOnScreen(usersGroups[i], userGroup[i]);
+        }
+    } catch (error) {
+        console.error(error);
     }
 });
 
-
 showGroupMembers.addEventListener('click', async () => {
-    const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
-    showGroupUserListTitle();
+    try {
+        const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
+        showGroupUserListTitle();
 
-    // Send a GET request to fetch group members from the server
-    const res = await axios.get(`http://65.1.165.223/group/members/${groupDetails.id}`);
-    const listOfGroupMembers = res.data.usersDetails;
-    const userGroupDetails = res.data.userGroup;
+        const res = await axios.get(`http://localhost:3000/group/members/${groupDetails.id}`);
+        const listOfGroupMembers = res.data.usersDetails;
+        const userGroupDetails = res.data.userGroup;
 
-    // Display the list of group members
-    for (let i = 0, j = 0; i < listOfGroupMembers.length, j < userGroupDetails.length; i++, j++) {
-        showGroupUsersOnScreen(listOfGroupMembers[i], userGroupDetails[j]);
+        for (let i = 0; i < listOfGroupMembers.length && i < userGroupDetails.length; i++) {
+            showGroupUsersOnScreen(listOfGroupMembers[i], userGroupDetails[i]);
+        }
+    } catch (error) {
+        console.error(error);
     }
 });
 
 addUsers.addEventListener('click', async () => {
-    // Send a GET request to fetch a list of users from the server
-    const res = await axios.get('http://65.1.165.223/users');
+    const res = await axios.get('http://localhost:3000/users');
     const listUsers = res.data.listOfUsers;
 
-    // Display the list of users
     showUserListTitle();
     listUsers.forEach(users => {
         showUsersOnScreen(users);
@@ -435,7 +436,7 @@ addUsers.addEventListener('click', async () => {
 const leaveUserGroup = (leaveGroup, userGroupId, li) => {
     const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
     leaveGroup.addEventListener('click', async () => {
-        const res = await axios.delete(`http://65.1.165.223/group/remove/${userGroupId}`);
+        const res = await axios.delete(`http://localhost:3000/group/remove/${userGroupId}`);
         if (res.status === 200) {
             li.remove();
             alert(`You Successfully left ${groupDetails.name}`);
@@ -474,4 +475,32 @@ function logout() {
   } catch (error) {
     console.log(error);
   }
+}
+
+async function uploadFile(e) {
+    try {
+        const token = localStorage.getItem('token');
+        const groupDetails = JSON.parse(localStorage.getItem('groupDetails'));
+        const groupId = groupDetails.id;
+        const file = e.target.files[0];
+        const form = new FormData();
+        form.append('userFile', file);
+
+        const response = await axios.post(`http://localhost:3000/files/file/${groupId}`, form, {
+            headers: { 'Authorization': token, 'Content-Type': 'multipart/form-data' },
+        });
+
+        showUsersChatsOnScreen(response.data.files);
+        socket.emit('send-message', response.data.files);
+
+        console.log('the file obj is ', response.data.files);
+
+        let usersChats = JSON.parse(localStorage.getItem('usersChats')) || [];
+        usersChats.push(response.data.files);
+        const chatsCanStored = 100; // Define the maximum number of chats that can be stored
+        let chats = usersChats.slice(usersChats.length - chatsCanStored);
+        localStorage.setItem('usersChats', JSON.stringify(chats));
+    } catch (err) {
+        console.error(err);
+    }
 }
