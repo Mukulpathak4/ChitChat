@@ -497,7 +497,7 @@ async function uploadFile(e) {
 
         let usersChats = JSON.parse(localStorage.getItem('usersChats')) || [];
         usersChats.push(response.data.files);
-        const chatsCanStored = 100; // Define the maximum number of chats that can be stored
+        const chatsCanStored = 100; 
         let chats = usersChats.slice(usersChats.length - chatsCanStored);
         localStorage.setItem('usersChats', JSON.stringify(chats));
     } catch (err) {

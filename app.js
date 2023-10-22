@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
 const upload = multer();
+const cron = require('node-cron');
 
 const app = express();
 const server = require('http').createServer(app);
@@ -13,7 +14,26 @@ const io = require('socket.io')(server, {
     origin: "*"
   }
 });
+cron.schedule('0 0 * * *', async () => {
+    try {
+        const chats = await Chats.findAll();
 
+        for (let chat of chats) {
+            await ArchivedChats.create({
+                message: chat.textmessage,
+                sender: chat.name,
+                groupId: chat.groupId,
+                userId: chat.userId
+            });
+            console.log('old chats are stored to archived table');
+
+            await Chats.destroy({ where: { id: chat.id } });
+            console.log('chats in the chats table are deleted');
+        }
+    } catch (err) {
+        console.log(err);
+    }
+})
 const port = process.env.PORT || 3000;
 
 const sequelize = require('./utility/database');
@@ -30,9 +50,8 @@ const fileRoutes = require('./routes/multimediaRoutes');
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));//To serve static file from public
+app.use(express.static("public"));
 
 app.use('/', userRoutes);
 app.use('/chats', chatRoutes);
